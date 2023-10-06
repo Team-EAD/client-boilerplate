@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdminLayout = (props) => {
+const BackofficerLayout = (props) => {
     return (
         <div>
             <div className={props.class}>
@@ -10,4 +10,4 @@ const AdminLayout = (props) => {
     );
 };
 
-export default AdminLayout;
+export default BackofficerLayout;

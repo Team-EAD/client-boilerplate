@@ -1,16 +1,39 @@
-.wrapper .sidebar {
+/* Sidebar.css */
+.sidebar {
     position: fixed;
-    top: 70px;
+    top: 10px;
+    margin-top: 105px;
     left: 10px;
-    background: linear-gradient(0deg, #2B4B43, #2B4B43);
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
     width: 220px;
     height: calc(100% - 80px);
     border-bottom-left-radius: 20px;
     transition: all 0.3s ease;
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
 }
 
-.wrapper .sidebar ul li a {
+.menu-icon {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.menu-icon i {
+    color: #ffffff;
+    font-size: 24px;
+}
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar ul li a {
     display: block;
     padding: 30px;
     position: relative;
@@ -19,35 +42,35 @@
     white-space: nowrap;
 }
 
-.wrapper .sidebar ul li a:before {
+.sidebar ul li a:before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 3px;
     height: 100%;
-    background: conic-gradient(from 208.67deg at 9.44% -12.5%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
+    background: linear-gradient(from 208.67deg at 9.44% -12.5%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
     display: none;
 }
 
-.wrapper .sidebar ul li a span.icon {
+.sidebar ul li a span.icon {
     margin-right: 10px;
     display: inline-block;
 }
 
-.wrapper .sidebar ul li a span.title {
+.sidebar ul li a span.title {
     display: inline-block;
 }
 
-.wrapper .sidebar ul li a:hover,
-.wrapper .sidebar ul li a.active {
-    background: conic-gradient(from 208.67deg at 9.44% -12.5%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background: linear-gradient(from 208.67deg at 9.44% -12.5%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
     color: #000000;
     font-weight: bold;
 }
 
-.wrapper .sidebar ul li a:hover:before,
-.wrapper .sidebar ul li a.active:before {
+.sidebar ul li a:hover:before,
+.sidebar ul li a.active:before {
     display: block;
 }
 
@@ -69,4 +92,15 @@
 
 ul {
     padding-left: 0;
+}
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background: linear-gradient(to right, #61dafb, #1a8cff); /* Update the gradient colors as needed */
+    color: #000000;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover:before,
+.sidebar ul li a.active:before {
+    display: block;
 }

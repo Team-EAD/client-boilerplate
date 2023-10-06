@@ -1,0 +1,56 @@
+
+.ticket-booking-container {
+    position: absolute;
+    width: 980px;
+    height: auto;
+    left: 291px;
+    top: 209px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    border: 3px solid rgba(0, 0, 0, 0.24);
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    box-sizing: border-box;
+    width: 128px;
+    height: 49px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    text-align: center;
+    color: #ffffff;
+  }
+  
+  .btn-secondary {
+    background: linear-gradient(to right, #2B4B43, #2B4B43);
+  }
+  
+  .btn-danger {
+    background: linear-gradient(to right, #8B0000, #C0C0C0);
+  }
+  
+
+  .alert-txt {
+    color: #da1212;
+  }
+  
+
+  .react-datepicker-wrapper,
+  .react-datepicker__input-container {
+    width: 100%;
+  }
+  
+  /* Add styles for time picker */
+  #timepicker-placeholder {
+    width: 100%;
+  }
+  

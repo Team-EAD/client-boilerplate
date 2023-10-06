@@ -1,81 +1,67 @@
-.wrapper .top_navbar {
-    width: calc(100% - 20px);
-    height: 60px;
-    display: flex;
+/* Header.css */
+/* Header.css */
+.header {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 10px; /* Adjust this value to align with the starting point of the sidebar */
+    left: 10px; /* Adjust this value to align with the starting point of the sidebar */
+    width: calc(100% - 20px);
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-}
-
-.wrapper .top_navbar .hamburger {
-    width: 70px;
-    height: 100%;
-    background: linear-gradient(0deg, #2B4B43, #2B4B43);
-    padding: 15px 17px;
-    border-top-left-radius: 20px;
-    cursor: pointer;
-}
-
-.wrapper .top_navbar .hamburger div {
-    width: 35px;
-    height: 4px;
-    background: #FFFFFF;
-    margin: 5px 0;
-    border-radius: 5px;
-}
-
-.wrapper .top_navbar .top_menu {
-    width: calc(100% - 70px);
-    height: 100%;
-    background: #fff;
-    border-top-right-radius: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /*padding: 0 20px;*/
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
-/*.wrapper .top_navbar .top_menu .logo {*/
-/*    color: #2e4ead;*/
-/*    font-size: 20px;*/
-/*    font-weight: 700;*/
-/*    letter-spacing: 3px;*/
-/*}*/
+/* ... rest of the styles ... */
 
-.profileText {
-    background: conic-gradient(from 217.4deg at 14.22% 13.32%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
+.logo-container {
+    display: flex;
+    align-items: center;
 }
 
-.logoutIcon {
-    transform: rotate(180deg);
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
 }
 
-.wrapper .top_navbar .top_menu ul {
+.menu-container ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
 }
 
-.wrapper .top_navbar .top_menu ul li a {
-    display: block;
-    margin: 0 10px;
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    background: linear-gradient(0deg, #2B4B43, #2B4B43);
-    border-radius: 50%;
-    color: #FFFFFF;
+.menu-container ul li {
+    margin-right: 15px;
 }
 
-.wrapper .top_navbar .top_menu ul li a:hover {
+.menu-container a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.menu-container p {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.menu-container p:hover {
     color: #fff;
 }
 
-.wrapper .top_navbar .top_menu ul li a:hover i {
-    color: #fff;
+.logout {
+    transform: rotate(180deg);
+}
+
+/* Add some space to the body to prevent content from being hidden under the fixed header */
+body {
+    margin-top: 60px; /* Adjust this value based on your header's height */
 }
