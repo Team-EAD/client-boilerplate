@@ -5,7 +5,22 @@
     top: 10px; /* Adjust this value to align with the starting point of the sidebar */
     left: 10px; /* Adjust this value to align with the starting point of the sidebar */
     width: calc(100% - 20px);
-    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    
+    background: conic-gradient(
+        from 45deg at 50% 50%,
+        #333333 0%,
+        #666666 25%,
+        #999999 50%,
+        #666666 75%,
+        #333333 100%
+      );
+      
+      
+        
+      
+      
+
+      
     color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 1000;

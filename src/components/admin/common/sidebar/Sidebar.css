@@ -4,7 +4,16 @@
     top: 10px;
     margin-top: 105px;
     left: 10px;
-    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    background: conic-gradient(
+        from 45deg at 50% 50%,
+        #333333 0%,
+        #666666 25%,
+        #999999 50%,
+        #666666 75%,
+        #333333 100%
+      );
+      
+      
     width: 220px;
     height: calc(100% - 80px);
     border-bottom-left-radius: 20px;
@@ -64,9 +73,9 @@
 
 .sidebar ul li a:hover,
 .sidebar ul li a.active {
-    background: linear-gradient(from 208.67deg at 9.44% -12.5%, #3EFFC4 0deg, #C1FFEC 123.75deg, #2B4B43 234.38deg, #3EFFC4 360deg);
-    color: #000000;
-    font-weight: bold;
+  background-color: #1a8cff; /* Dark blue background on hover/active */
+  color: #ffffff; /* White text color on hover/active */
+  font-weight: bold; /* Bold font weight on hover/active */
 }
 
 .sidebar ul li a:hover:before,
@@ -95,10 +104,11 @@ ul {
 }
 .sidebar ul li a:hover,
 .sidebar ul li a.active {
-    background: linear-gradient(to right, #61dafb, #1a8cff); /* Update the gradient colors as needed */
-    color: #000000;
-    font-weight: bold;
+  background: linear-gradient(to right, #61dafb, #0d898d); /* Gradient colors: blue to dark blue */
+  color: #000000; /* Text color */
+  font-weight: bold;
 }
+
 
 .sidebar ul li a:hover:before,
 .sidebar ul li a.active:before {
