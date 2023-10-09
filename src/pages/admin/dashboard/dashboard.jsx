@@ -16,7 +16,7 @@ import Signup from '../../signUp/signup'; // Import your Signup component
 const Dashboard = ({ userRole }) => {
   return (
     <div>
-      <h2>Dashboard</h2>
+   
       {userRole === 'backofficer' && <Signup />}
       {/* Other dashboard content */}
     </div>

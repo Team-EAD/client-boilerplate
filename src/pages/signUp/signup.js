@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import './signup.css'; // Import your CSS file
+import axios from 'axios';
 
 const Signup = ({ history }) => {
   const [username, setUsername] = useState('');
@@ -15,27 +17,12 @@ const Signup = ({ history }) => {
       };
 
       // Make a POST request to the backend for user signup
-      const response = await fetch('http://localhost:3000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
+      const response = await axios.post('http://localhost:3000/auth/register', user);
 
-      if (response.ok) {
-        // Signup successful, obtain the JWT token from the response
-        const { token } = await response.json();
-
-        // Store the token in localStorage or a secure storage method
-        localStorage.setItem('token', token);
-
-        // Redirect the user to the appropriate dashboard based on userRole
-        if (userRole === 'backofficer') {
-          history.push('/backofficer/dashboard');
-        } else if (userRole === 'travelagent') {
-          history.push('/travelagent/dashboard');
-        }
+      if (response.status === 200) {
+        // Signup successful, you can handle it accordingly
+        console.log('Signup successful');
+        history.push('/login'); // Redirect to the login page
       } else {
         // Handle signup errors (e.g., display an error message)
         console.error('Signup failed:', response.statusText);
@@ -46,28 +33,31 @@ const Signup = ({ history }) => {
   };
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <select onChange={(e) => setUserRole(e.target.value)} value={userRole}>
-        <option value="backofficer">Back Officer</option>
-        <option value="travelagent">Travel Agent</option>
-      </select>
-      <button onClick={handleSignup}>Sign Up</button>
+    <div className="signup-container"> {/* Apply the new design container class */}
+      <div className="signup-form">
+        <h2>Sign Up</h2>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <select onChange={(e) => setUserRole(e.target.value)} value={userRole}>
+          <option value="backofficer">Back Officer</option>
+          <option value="travelagent">Travel Agent</option>
+        </select>
+        <button onClick={handleSignup}>Sign Up</button>
+      </div>
     </div>
   );
 };
 
 export default Signup;
+
 

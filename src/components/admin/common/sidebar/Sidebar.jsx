@@ -71,13 +71,19 @@ const Sidebar = ({ userRole }) => {
                 <span className="title">Traveler</span>
               </Link>
             </li>
+            <li>
+              <Link to="/backofficer/train">
+                <span className="icon"><i className="fa fa-train" aria-hidden="true" /></span>
+                <span className="title">Train</span>
+              </Link>
+            </li>
           </>
         )}
         {userRole === 'travelagent' && (
           <li>
-            <Link to="/travelagent/train">
+            <Link to="/travelagent/profile">
               <span className="icon"><i className="fa fa-train" aria-hidden="true" /></span>
-              <span className="title">Train</span>
+              <span className="title">Profile</span>
             </Link>
           </li>
         )}

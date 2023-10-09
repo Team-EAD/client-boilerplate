@@ -212,12 +212,16 @@ import Signup from './pages/signUp/signup';
 import Profile from './pages/travelAgent/profileManagement/profile'; // Import Profile component
 import Header from './components/admin/common/header/Header'; // Import Header component
 import Train from './pages/backofficer/trainManagement/train';
+import TicketBooking from './pages/backofficer/TicketBookingManagement/ticketBooking';
+import Traveler from './pages/backofficer/travelerManagement/traveler';
+import DummySidebar from './components/admin/common/dummySidebar/dummySidebar';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState('');
   const [username, setUsername] = useState(''); // Define username state
   const [password, setPassword] = useState(''); // Define password state
+  const [showSignup, setShowSignup] = useState(false);
   const history = useHistory(); // Define history for navigation
 
   useEffect(() => {
@@ -251,31 +255,58 @@ const App = () => {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
-        username: username,
-        password: password,
-      });
+//   const handleLogin = async () => {
+//     try {
+//       const response = await axios.post('http://localhost:3000/auth/login', {
+//         username: username,
+//         password: password,
+//       });
 
-      const token = response.data.token;
+//       const token = response.data.token;
 
-      localStorage.setItem('jwtToken', token);
+//       localStorage.setItem('jwtToken', token);
 
-      await fetchUserRole(token);
+//       await fetchUserRole(token);
 
-      if (userRole === 'backofficer') {
-        history.push('/backofficer');
-      } else if (userRole === 'travelagent') {
-        history.push('/travelagent');
-      }
+//       if (userRole === 'backofficer') {
+//         history.push('/backofficer');
+//       } else if (userRole === 'travelagent') {
+//         history.push('/travelagent');
+//       }
 
-      onLogin();
-    } catch (error) {
-      console.error('Login error:', error);
+//       onLogin();
+//     } catch (error) {
+//       console.error('Login error:', error);
+//     }
+//   };
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/auth/login', {
+      username: username,
+      password: password,
+    });
+
+    const token = response.data.token;
+
+    localStorage.setItem('jwtToken', token);
+
+    // Fetch the user role and set it before redirection
+    const userRoleResponse = await fetchUserRole(token);
+
+    if (userRoleResponse === 'backofficer') {
+        window.location.href = '/backofficer';
+    //   history.push('/backofficer');
+      setUserRole('backofficer'); // Set userRole here
+    } else if (userRoleResponse === 'travelagent') {
+      history.push('/travelagent');
+      setUserRole('travelagent'); // Set userRole here
     }
-  };
 
+    onLogin();
+  } catch (error) {
+    console.error('Login error:', error);
+  }
+};
   const handleLogout = () => {
     localStorage.removeItem('jwtToken');
     setIsLoggedIn(false);
@@ -297,14 +328,20 @@ const App = () => {
       <div className="App">
         <header className="App-header">
           <Header />
+          <DummySidebar/>
           {isLoggedIn ? (
             <>
-              <button onClick={handleLogout}>Logout</button>
+             
               {renderRedirectRoute()}
             </>
           ) : (
             <>
-              <Login onLogin={handleLogin} />
+             <Login
+                onLogin={handleLogin}
+                // Add a prop to toggle the signup form visibility
+                showSignupForm={() => setShowSignup(true)}
+              />
+              {showSignup && <Signup/>} 
             </>
           )}
         </header>
@@ -313,14 +350,20 @@ const App = () => {
             <>
               <Sidebar userRole={userRole} />
               <Route path="/backofficer" component={Dashboard} />
-              <Route path="/backofficer/ticketbooking" component={Signup} />
+              <Route path="/backofficer/ticketbooking" component={TicketBooking} />
               <Route path="/travelagent/profile" component={Profile} />
               <Route path="/backofficer/train" component={Train} />
+              <Route path="/backofficer/traveler" component={Traveler} />
+              <Route path="/signup" component={Signup} />
+
             </>
           ) : (
-            <p>Please log in to access the dashboard.</p>
+            
+            <></>
+            
           )}
         </main>
+        
       </div>
     </Router>
   );
