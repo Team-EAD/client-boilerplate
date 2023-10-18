@@ -6,7 +6,6 @@ import BackofficerLayout from '../layout/Backofficerlayout'
 import Header from "../components/admin/common/header/Header";
 import Sidebar from "../components/admin/common/sidebar/Sidebar";
 import ClientHeader from "../components/client/common/header/ClientHeader";
-import HomePage from "../pages/client/home/homePage";
 import TicketBooking from "../pages/backofficer/TicketBookingManagement/ticketBooking";
 import Traveler from "../pages/backofficer/travelerManagement/traveler";
 import Train from "../pages/backofficer/trainManagement/train";

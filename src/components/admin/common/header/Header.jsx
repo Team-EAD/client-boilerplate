@@ -22,7 +22,6 @@ const Header = () => {
         <i className="fa fa-bars" />
       </div>
       <div className="logo-container">
-        <img src={logo} alt="Logo" className="logo" />
         <h3>Ticket Reservation Office</h3>
       </div>
       <div className="menu-container">
