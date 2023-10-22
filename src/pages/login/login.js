@@ -1,150 +1,60 @@
-// import React, { useState } from 'react';
 
-// const Login = ({ onLogin }) => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleLogin = async () => {
-//     // Make an API call to your backend to authenticate the user
-//     const response = await fetch('http://localhost:3000/login', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ username, password }),
-//     });
-
-//     if (response.ok) {
-//       const data = await response.json();
-//       // Store the JWT token in local storage or cookies
-//       localStorage.setItem('jwtToken', data.token);
-//       // Notify the parent component that the user has logged in
-//       onLogin();
-//     } else {
-//       // Handle authentication error
-//       // Display an error message to the user
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Login</h2>
-//       <input
-//         type="text"
-//         placeholder="Username"
-//         value={username}
-//         onChange={(e) => setUsername(e.target.value)}
-//       />
-//       <input
-//         type="password"
-//         placeholder="Password"
-//         value={password}
-//         onChange={(e) => setPassword(e.target.value)}
-//       />
-//       <button onClick={handleLogin}>Login</button>
-//     </div>
-//   );
-// };
-
-// export default Login;
-// import React, { useState } from 'react';
-// import axios from 'axios';
-// import './login.css'; // Import your CSS file
-
-// const Login = ({ onLogin,showSignupForm }) => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleLogin = async () => {
-//     try {
-//       const response = await axios.post('http://localhost:3000/auth/login', {
-//         username: username,
-//         password: password,
-//       });
-
-//       const token = response.data.token;
-
-//       // Store the token in local storage
-//       localStorage.setItem('jwtToken', token);
-
-//       // Call the onLogin function passed from App.js
-//       onLogin();
-//     } catch (error) {
-//       console.error('Login error:', error);
-//     }
-//   };
-//   const handleSignupClick = (e) => {
-//     e.preventDefault(); // Prevent the default behavior of the anchor tag
-//     showSignupForm();
-//   };
-//   return (
-//     <div className="login-container">
-//       <h2>Login</h2>
-//       <input
-//         type="text"
-//         placeholder="Username"
-//         className="login-input"
-//         onChange={(e) => setUsername(e.target.value)}
-//       />
-//       <input
-//         type="password"
-//         placeholder="Password"
-//         className="login-input"
-//         onChange={(e) => setPassword(e.target.value)}
-//       />
-//       <button className="login-button" onClick={handleLogin}>
-//         Login
-//       </button>
-
-      
-//         <p>Don't have an account?</p>
-//         <a href="/signup" onClick={handleSignupClick}>Sign Up</a>
-      
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 import React, { useState } from 'react';
 import axios from 'axios';
 import './login.css';
+import { BrowserRouter as Router, Route, Redirect, useHistory } from 'react-router-dom';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, showSignupForm, loginError }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showSignup, setShowSignup] = useState(false);
   const [signupUsername, setSignupUsername] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [userRole, setUserRole] = useState('backofficer'); // Default role
-  const [loginAlert, setLoginAlert] = useState(null);
+  const [loginAlert, setLoginAlert] = useState(loginError || null);
+  const history = useHistory(); 
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      const response = await axios.post('https://localhost:44304/api/auth/login', {
         username: username,
         password: password,
       });
-
+  
       const token = response.data.token;
+      const userRole = response.data.roles;
+  
+      console.log('Response Data:', response.data); // Log the entire response data
+      console.log('User Role:', userRole);
+  
       localStorage.setItem('jwtToken', token);
+      localStorage.setItem('userRole', userRole);
+      setUserRole(userRole); // Set the user role
+  
+      if (userRole === 'backofficer') {
+        history.push('/backofficer');
+      } else if (userRole === 'travelagent') {
+        history.push('/travelagent');
+      }
+  
       onLogin();
-      setLoginAlert({ type: 'success', message: 'Login successful' });
     } catch (error) {
       console.error('Login error:', error);
       setLoginAlert({ type: 'error', message: 'Login failed' });
     }
   };
+  
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', {
+      const response = await axios.post('https://localhost:44304/api/auth/register', {
         username: signupUsername,
         password: signupPassword,
-        userRole: userRole, // Include the selected user role in the request
+        userRole: userRole,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         setShowSignup(false);
         console.log('Signup successful');
       } else {
@@ -214,6 +124,11 @@ const Login = ({ onLogin }) => {
           <button className="login-button" onClick={handleLogin}>
             Login
           </button>
+          {loginAlert && (
+            <div className={`alert alert-${loginAlert.type}`}>
+              {loginAlert.message}
+            </div>
+          )}
           <p>
             Don't have an account?{' '}
             <a href="#" onClick={() => setShowSignup(true)}>

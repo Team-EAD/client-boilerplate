@@ -17,7 +17,7 @@ const Signup = ({ history }) => {
       };
 
       // Make a POST request to the backend for user signup
-      const response = await axios.post('http://localhost:3000/auth/register', user);
+      const response = await axios.post('https://localhost:44304/api/auth/register', user);
 
       if (response.status === 200) {
         // Signup successful, you can handle it accordingly

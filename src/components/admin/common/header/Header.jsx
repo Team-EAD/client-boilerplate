@@ -1,20 +1,12 @@
-// Header.js
+
+
 import React from 'react';
 import './header.css';
-import logo from '../../../../assets/logo/logo.svg';
+import logo from '../../../../assets/logo/railway.png';
 import { Link, useHistory } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ isLoggedIn, userRole, handleLogout, showLoginForm }) => {
   const history = useHistory();
-
-  const handleLogout = () => {
-    // Perform logout actions, e.g., clear local storage
-    localStorage.removeItem('jwtToken');
-    
-    // Redirect to the login page or another appropriate location
-    window.location.reload('/');
-   
-  };
 
   return (
     <div className="header">
@@ -22,17 +14,25 @@ const Header = () => {
         <i className="fa fa-bars" />
       </div>
       <div className="logo-container">
+        <img src={logo} alt="logo"  height='60px' width='100px'  />
         <h3>Ticket Reservation Office</h3>
       </div>
       <div className="menu-container">
-        <ul>
+      <ul>
           <li>
-            <p className="logout" onClick={handleLogout}>
-              <i className="fa fa-sign-out logoutIcon" aria-hidden="true" />
-            </p>
+            {isLoggedIn ? (
+              <p className="logout" onClick={handleLogout}>
+                <i className="fa fa-sign-out logoutIcon" aria-hidden="true" />
+              </p>
+            ) : (
+              <p className="login" onClick={showLoginForm}>
+                <i className="fa fa-sign-in loginIcon" aria-hidden="true" />
+                <span>Login</span>
+              </p>
+            )}
           </li>
           <li>
-            <Link to="/client">
+            <Link to="/">
               <i className="fas fa-user" />
             </Link>
           </li>
@@ -43,4 +43,3 @@ const Header = () => {
 };
 
 export default Header;
-
