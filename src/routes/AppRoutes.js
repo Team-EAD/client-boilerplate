@@ -34,6 +34,7 @@ const BackofficerRoutes = () => {
           <Switch>
             <Route path="/backofficer" component={BackofficerRoutes} />
             <Route path="/travelagent/profile" component={Profile} />
+            <Route path="/travelagent/profile" component={Profile} />
             {/* Other routes */}
           </Switch>
         </Router>

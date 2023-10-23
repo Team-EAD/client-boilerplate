@@ -8,60 +8,167 @@ import Axios from "axios";
 
 const Train = () => {
   // Define state variables
+  const [id, setid] = useState('');
   const [trainID, setTrainID] = useState('');
   const [trainName, setTrainName] = useState('');
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
-  const [departureTime, setDepartureTime] = useState(null); // Use null for Date objects
-  const [arrivalTime, setArrivalTime] = useState(null);     // Use null for Date objects
+  const [depatureTime, setDepartureTime] = useState(''); // Use null for Date objects
+  const [arrivalTime, setArrivalTime] = useState('');     // Use null for Date objects
   const [userSearch, setUserSearch] = useState('');
   const [listOfSchedules, setListOfSchedules] = useState([]);
   const [formErrors, setFormErrors] = useState({});
 
   // Function to create a new schedule
+
   const createSchedule = () => {
     Axios.post("https://localhost:44304/api/TrainSchedule", {
+      
       trainID,
       trainName,
       origin,
       destination,
-      departureTime,
-      arrivalTime,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          // Check if the reservation was successful
-          // Update the list of schedules
-          setListOfSchedules([
-            ...listOfSchedules,
-            {
-              trainID,
-              trainName,
-              origin,
-              destination,
-              departureTime,
-              arrivalTime,
-            },
-          ]);
+      depatureTime,
+      arrivalTime
 
-          VueSweetalert2.fire({
-            toast: true,
-            position: 'center',
-            showConfirmButton: false,
-            timer: 1000,
-            icon: 'success',
-            title: 'Schedule added to the system',
-          }).then(function () {
-            // Redirect the user to the desired page
-            window.location.href = "/backofficer/train";
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        // Handle the error
-      });
+
+    }).then((response) => {
+      setListOfSchedules([
+        ...listOfSchedules,
+        {
+          trainID,
+          trainName,
+          origin,
+          destination,
+          depatureTime,
+          arrivalTime
+      
+        },
+      ]);
+    });
+    VueSweetalert2.fire({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 1000,
+        icon: 'success',
+        title: 'Train details added to the System',
+    }).then(function () {
+      // Redirect the user
+      window.location.href = "/backofficer/train";
+    });
   };
+
+  const loadscheduleDetailsedit = (TrainSchedule) => {
+
+    document.getElementById("reg").setAttribute("disabled", "true");
+    document.getElementById("delete").setAttribute("disabled", "true");
+    setid(TrainSchedule.id);
+    setTrainID(TrainSchedule.trainID);
+    setTrainName(TrainSchedule.trainName);
+    setOrigin(TrainSchedule.origin);
+    setDestination(TrainSchedule.destination);
+    const dtimes = new Date(TrainSchedule.depatureTime);
+    setDepartureTime(dtimes);
+
+    const atimes = new Date(TrainSchedule.arrivalTime);
+
+    setArrivalTime(atimes);
+
+    
+  };
+
+  const loadscheduleDetailsdelete = (TrainSchedule) => {
+
+    document.getElementById("reg").setAttribute("disabled", "true");
+    document.getElementById("edit").setAttribute("disabled", "true");
+    setid(TrainSchedule.id);
+    setTrainID(TrainSchedule.trainID);
+    setTrainName(TrainSchedule.trainName);
+    setOrigin(TrainSchedule.origin);
+    setDestination(TrainSchedule.destination);
+    const dtimes = new Date(TrainSchedule.depatureTime);
+    setDepartureTime(dtimes);
+
+    const atimes = new Date(TrainSchedule.arrivalTime);
+
+    setArrivalTime(atimes);
+
+    
+  };
+
+
+ // Update a reservation
+ function updateSchedule(e) {
+  e.preventDefault();
+  const newPackage = {
+      id,
+      trainID,
+      trainName,
+      origin,
+      destination,
+      depatureTime,
+      arrivalTime
+  };
+
+  Axios.put(`https://localhost:44304/api/TrainSchedule/${id}`, newPackage)
+    .then((response) => {
+      // Check if the response is successful (status code 200)
+      if (response.status === 200) {
+        VueSweetalert2.fire({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 1800,
+          icon: 'success',
+          title: "successfully update schedule", // Assuming the response has a "message" property
+        }).then(function () {
+          // Redirect the user
+          window.location.reload();
+        });
+      }
+    })
+    .catch((err) => {
+      alert("error");
+      window.location.reload();
+    });
+};
+const deleteschedule = () => {
+  Axios.get(`https://localhost:44304/api/TrainSchedule/${id}`)
+    .then((response) => {
+      const trainSchedule = response.data; // Assuming that the API response contains the train schedule data
+
+      if (trainSchedule.reserve === true) {
+        alert("Train schedule is reserved and cannot be deleted.");
+      } else {
+        // Train schedule is not reserved, proceed with deletion
+        Axios.delete(`https://localhost:44304/api/TrainSchedule/${id}`)
+          .then((response) => {
+            if (response.status === 200) {
+              VueSweetalert2.fire({
+                toast: true,
+                position: 'center',
+                showConfirmButton: false,
+                timer: 1800,
+                icon: 'success',
+                title: "Successfully canceled the schedule",
+              }).then(function () {
+                // Redirect the user
+                window.location.reload();
+              });
+            }
+          })
+          .catch((err) => {
+            window.location.reload();
+          });
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching train schedule data:", err);
+    });
+};
+
+
 
   // Fetch the list of schedules when the component mounts
   useEffect(() => {
@@ -74,6 +181,14 @@ const Train = () => {
         // Handle the error
       });
   }, []);
+
+
+
+
+
+
+
+
 
   return (
     <div className="ticket-booking-container">
@@ -119,7 +234,7 @@ const Train = () => {
               <DatePicker
                 id="departure-time-picker"
                 placeholderText="Departure Time"
-                selected={departureTime}
+                selected={depatureTime}
                 onChange={(date) => setDepartureTime(date)}
                 showTimeSelect
                 showTimeSelectOnly
@@ -144,26 +259,46 @@ const Train = () => {
           </div>
           <div className="row mt-4">
             <div className="col">
-              <input
-                type="text"
-                value={origin}
-                className="form-control"
-                placeholder="Origin"
-                onChange={(e) => {
-                  setOrigin(e.target.value);
-                }}
-              />
+            <select
+                    value={origin}
+                    name="type"
+                    className="form-select"
+                    placeholder='Depature Location'
+                    aria-label="role" 
+                    onChange={(event) => {
+                      setOrigin(event.target.value);
+                    }}
+                  >
+                    < option value="" disabled selected  >
+                     Depature Location
+                    </option>
+                    <option value="Galle">Galle</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Ambalangoda">Ambalangoda</option>
+                    <option value="Nuwara">Nuwara</option>
+                    <option value="Matara">Matara</option>
+                  </select>
             </div>
             <div className="col">
-              <input
-                type="text"
-                value={destination}
-                className="form-control"
-                placeholder="Destination"
-                onChange={(e) => {
-                  setDestination(e.target.value);
-                }}
-              />
+            <select
+                    value={destination}
+                    name="type"
+                    className="form-select"
+                    placeholder='Depature Location'
+                    aria-label="role" 
+                    onChange={(event) => {
+                      setDestination(event.target.value);
+                    }}
+                  >
+                    < option value="" disabled selected  >
+                    Destination Location
+                    </option>
+                    <option value="Galle">Galle</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Ambalangoda">Ambalangoda</option>
+                    <option value="Nuwara">Nuwara</option>
+                    <option value="Matara">Matara</option>
+                  </select>
             </div>
           </div>
           <div className="row mt-4">
@@ -177,16 +312,18 @@ const Train = () => {
                 type="button"
                 className="btn btn-primary btnRegister"
                 onClick={createSchedule}
+                id="reg"
               >
                 Add
               </button>
               <button
+              id="edit"
                 type="button"
-                className="btn btn-secondary btnUpdate"
+                className="btn btn-secondary btnUpdate" onClick={updateSchedule}
               >
                 Update
               </button>
-              <button type="button" className="btn btn-danger btnDelete">
+              <button type="button" className="btn btn-danger btnDelete" id="delete"  onClick={deleteschedule}>
                 Delete
               </button>
             </div>
@@ -228,6 +365,7 @@ const Train = () => {
                 <th scope="col">Arrival Time</th>
                 <th scope="col">Origin</th>
                 <th scope="col">Destination</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
                 <th scope="col" />
               </tr>
@@ -251,16 +389,17 @@ const Train = () => {
                       <td className="crs-td">{TrainSchedule.id}</td>
                       <td className="crs-td">{TrainSchedule.trainID}</td>
                       <td className="crs-td">{TrainSchedule.trainName}</td>
-                      <td className="crs-td">{TrainSchedule.departureTime}</td>
+                      <td className="crs-td">{TrainSchedule.depatureTime}</td>
                       <td className="crs-td">{TrainSchedule.arrivalTime}</td>
                       <td className="crs-td">{TrainSchedule.origin}</td>
                       <td className="crs-td">{TrainSchedule.destination}</td>
+                      <td className="crs-td">{TrainSchedule.reserve ? 'Reserve' : 'Not Reserve'}</td>
                       <td>
                         <i className="fa-solid fa-pen me-3 text-primary d-inline fa-2x" onClick={() => {
-                          // Handle update functionality
+                           loadscheduleDetailsedit(TrainSchedule);
                         }} />
                         <i className="fa-solid fa-trash-can d-inline me-2 text-danger d-inline fa-2x" onClick={() => {
-                          // Handle delete functionality
+                         loadscheduleDetailsdelete(TrainSchedule);
                         }} />
                       </td>
                     </tr>

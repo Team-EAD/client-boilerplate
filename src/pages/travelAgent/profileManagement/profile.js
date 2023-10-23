@@ -1,297 +1,169 @@
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Axios from 'axios';
 import './profile.css'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import VueSweetalert2 from "sweetalert2";
+
 
 const Profile= () => {
-    const [selectedTime, setSelectedTime] = useState(null);
-  const [Vacancy_Id, setVacancy_Id] = useState('');
-  const [Vacancy_Position, setVacancy_Position] = useState('');
-  const [Vacancy_Category, setVacancy_Category] = useState('');
-  const [No_of_Positions, setNo_of_Positions] = useState('');
-  const [Location, setLocation] = useState('');
-  const [Salary, setSalary] = useState('');
-  const [Vacancy_Type, setVacancy_Type] = useState('');
-  const [Date_Posted, setDate_Posted] = useState('');
-  const [Details, setDetails] = useState('');
-  const [formErrors, setFormErrors] = useState({});
-  const [image_url, setimage_url] = useState("");
 
-  const handleSubmit = () => {
-    // Handle form submission here
-  };
+  const [listOftravelers, setlistOftravelers] = useState([]);
+  const [userSearch, setuserSearch] = useState("");
 
-  const sendVacancyData = () => {
-    // Handle sending vacancy data here
-  };
 
-  const addcoverimage= () => {
-    let imgDiv = document.getElementById("imgInputDiv");
 
-    let imgUploader = document.createElement("input");
-    imgUploader.setAttribute("id", "imgUploader");
-    imgUploader.setAttribute("type", "file");
-    imgUploader.setAttribute("accept", "image/png, image/gif, image/jpeg");
-    imgUploader.setAttribute("class", "d-none")
-    imgDiv.appendChild(imgUploader);
 
-    let imgUploaderElement = document.getElementById("imgUploader");
-    console.log(imgUploaderElement);
+  useEffect(() => {
+    Axios.get("https://localhost:44304/api/Traveler").then((response) => {
+      setlistOftravelers(response.data);
+    });
+  }, []);
+  
+  const activeuser = (Traveler) => {
 
-    if (imgUploaderElement !== undefined && imgUploaderElement !== null) {
-        imgUploaderElement.click();
-        imgUploaderElement.addEventListener("change", () => {
-            imgUploaderElement = document.getElementById("imgUploader");
-            console.log(imgUploaderElement);
-            if (imgUploaderElement.files[0] !== null && imgUploaderElement.files[0] !== undefined) {
-                if (imgUploaderElement.files.length > 0) {
-                    const fileReader = new FileReader();
+    const id =Traveler.nic
 
-                    fileReader.onload = function (event) {
-                      setimage_url(event.target.result);
-                    };
-
-                    fileReader.readAsDataURL(imgUploaderElement.files[0]);
-                }
-            }
+    Axios.post(`https://localhost:44304/api/Traveler/activate/${id}`)
+      .then((response) => {
+        VueSweetalert2.fire({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 1000,
+          icon: 'success',
+          title: 'User Activate Succesfully',
+        }).then(function () {
+          // Redirect the user
+          // alert(reservetrainID);
+          window.location.reload();
         });
-    }
+      })
+      .catch((error) => {
+        alert('Maximum limit of reservation'); // Handle any errors
+        window.location.reload();
+      });
+  };
+  
+  const deactiveuser = (Traveler) => {
 
-    document.getElementById("btnEditImg").removeAttribute("disabled");
-    document.getElementById("btnImgDelete").removeAttribute("disabled");
-}
+    const id =Traveler.nic
 
-const updatecoverimage = () => {
-    document.getElementById("ProfileImage").removeAttribute("src");
-    document.getElementById("btnAddImg").setAttribute("disabled", "true");
-
-    let imgDiv = document.getElementById("imgInputDiv");
-
-    let imgUploader = document.createElement("input");
-    imgUploader.setAttribute("id", "imgUploader");
-    imgUploader.setAttribute("type", "file");
-    imgUploader.setAttribute("required", "true");
-    imgUploader.setAttribute("accept", "image/png, image/gif, image/jpeg");
-    imgUploader.setAttribute("class", "d-none")
-    imgDiv.appendChild(imgUploader);
-
-    let imgUploaderElement = document.getElementById("imgUploader");
-    console.log(imgUploaderElement);
-
-    if (imgUploaderElement !== undefined && imgUploaderElement !== null) {
-        imgUploaderElement.click();
-        imgUploaderElement.addEventListener("change", () => {
-            imgUploaderElement = document.getElementById("imgUploader");
-            console.log(imgUploaderElement);
-            if (imgUploaderElement.files[0] !== null && imgUploaderElement.files[0] !== undefined) {
-                if (imgUploaderElement.files.length > 0) {
-                    const fileReader = new FileReader();
-
-                    fileReader.onload = function (event) {
-                      setimage_url(event.target.result);
-                    };
-
-                    fileReader.readAsDataURL(imgUploaderElement.files[0]);
-                }
-            }
+    Axios.post(`https://localhost:44304/api/Traveler/deactivate/${id}`)
+      .then((response) => {
+        VueSweetalert2.fire({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 1000,
+          icon: 'success',
+          title: 'User Deactivate Succesfully',
+        }).then(function () {
+          // Redirect the user
+          // alert(reservetrainID);
+          window.location.reload();
         });
-    }
+      })
+      .catch((error) => {
+        alert('Maximum limit of reservation'); // Handle any errors
+        window.location.reload();
+      });
+  };
+  
 
-}
-  const removecoverImages = () => {
-    document.getElementById("ProfileImage").removeAttribute("src");
-    document.getElementById("btnImgDelete").setAttribute("disabled", "true");
-  }
+
   return (
     <div className="ticket-booking-container">
-      <h1 className="fw-bold">Profile Management</h1>
+      <h1 className="fw-bold">Traveler Profile Management</h1>
       <div className="row mt-5 ps-3">
-        <div className="col-lg-6 col-md-12 col-sm-12">
-          <div className="row">
-            {/* <div className="d-flex justify-content-start align-items-center">
-              <button id="btn-generate-report" className="btn btnRegister">
-                Generate Report
-              </button>
-            </div> */}
-          </div>
-        </div>
-        <div className="col-lg-6 col-md-12 col-sm-12"></div>
-      </div>
       <div className="row mt-5 px-3">
-        <form> 
-            <div className="row">
-                                <div className="col d-flex justify-content-end align-items-center">
-                                    <div className="col d-flex justify-content-end">
-                                        <div>
-                                            <button className="btn btnAddImg" id="btnAddImg" type="button"
-                                                    onClick={() => {
-                                                      addcoverimage()
-                                                    }}>
-                                                <i className="fa fa-plus text-white" aria-hidden="true"/>
-                                            </button>
-                                            <button className="btn btnEditImg" id="btnEditImg" type="button"
-                                                    onClick={() => {
-                                                      updatecoverimage()
-                                                    }}>
-                                                <i className="fa-solid fa-pen text-white"/>
-                                            </button>
-                                            <button className="btn btnImgDelete" id="btnImgDelete" type="button"
-                                                    onClick={() => {
-                                                        removecoverImages()
-                                                    }}>
-                                                <i className="fa-solid fa-trash-can d-inline text-white"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div id="imgInputDiv">
-                                        <div>
-                                            <img id="ProfileImage" className="imgDiv" src={image_url}
-                                                 alt=""/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-          <div className="row mt-4">
-            
-            <div className="col">
-            <input
-                type="text"
-                value={Vacancy_Id}
-                className="form-control"
-                placeholder="First Name"
-                onChange={(e) => {
-                  setVacancy_Id(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Vacancy_Id}</p>
-            </div>
-            <div className="col">
-            <input
-                type="text"
-                value={Vacancy_Id}
-                className="form-control"
-                placeholder="Last Name"
-                onChange={(e) => {
-                  setVacancy_Id(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Vacancy_Id}</p>
-            </div>
-            
-          </div>
-          <div className="row mt-4">
-          <div className="col">
-          <input
-                type="text"
-                value={Vacancy_Id}
-                className="form-control"
-                placeholder="NIC Number"
-                onChange={(e) => {
-                  setVacancy_Id(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Vacancy_Id}</p>
-            </div>
-            <div className="col">
-            <input
-                type="text"
-                value={Location}
-                className="form-control"
-                placeholder="Phone Number"
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Location}</p>
-            </div>
-            <div className="col">
-            
-            </div>
-          </div>
-          <div className="row mt-4">
-            <div className="col">
-              <input
-                type="text"
-                value={Location}
-                className="form-control"
-                placeholder="Email Address"
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Location}</p>
-            </div>
-            <div className="col">
-            <div className="col">
-              <input
-                type="text"
-                value={Location}
-                className="form-control"
-                placeholder="passpo"
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Location}</p>
-            </div>
-            </div>
-          </div>
-          <div className="row mt-4">
-            <div className="col">
-            
-            <input
-                type="text"
-                value={Location}
-                className="form-control"
-                placeholder="Train Name"
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-              <p className="alert-txt">{formErrors.Location}</p>
-            </div>
-            <div className="col">
-              <div className="form-group">
-                <textarea
-                  className="form-control"
-                  value={Details}
-                  id="exampleFormControlTextarea1"
-                  placeholder="Details"
-                  rows="3"
-                  onChange={(e) => {
-                    setDetails(e.target.value);
+          <h6 className="mb-0 fw-bold mt-2 mb-2 fs-5">Current Travelers</h6>
+          <div className="row mb-5">
+            <div className="d-flex justify-content-end align-items-center">
+              <div className="d-flex justify-content-center align-items-center">
+                <input
+                  id="searchID"
+                  type="text"
+                  className="form-control col-8 me-5 px-5"
+                  placeholder="Traveler"
+                 onChange={(e) => {
+                  setuserSearch(e.target.value);
                   }}
-                ></textarea>
-                <p className="alert-txt">{formErrors.Details}</p>
+                />
+              </div>
+              <div>
+                <input
+                  type="button"
+                  className="form-control btnSearch text-white"
+                  value="Search"
+                />
               </div>
             </div>
+          </div>
 
+          <div className="table-responsive">
+            <table
+              className="table table-striped custom-table"
+              id="assignLabsTable"
+            >
+              <thead>
+                <tr>
+                  <th scope="col">Nic</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">First Name</th>
+                  <th scope="col">Last Name</th>
+                  <th scope="col">contacts</th>
+                  <th scope="col">Country</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                  <th scope="col" />
+                </tr>
+              </thead>
+              <tbody>
+                {listOftravelers &&
+                     listOftravelers
+                      .filter((value) => {
+                        if (userSearch === "") {
+                          return value;
+                        } else if (
+                          value.firstName
+                            .toLowerCase()
+                            .includes(userSearch.toLowerCase())
+                        ) {
+                          return value;
+                        }
+                      })
+                      .map((Traveler, i) => (
+                        <tr class="crs-tr" data-status="active">
+                          <td className="crs-td">{Traveler.nic}</td>
+                          <td className="crs-td">< img src={Traveler.image} class="crsthumimg" alt=""/></td>
+                          <td className="crs-td">
+                            {Traveler.firstName}
+                          </td>
+                          <td className="crs-td">
+                            {Traveler.lastName}
+                          </td>
+                          <td className="crs-td">{Traveler.phone}</td>
+                          <td className="crs-td">{Traveler.country}</td>
+                          <td className="crs-td">{Traveler.isActive ? 'active' : 'deactive'}</td>
+                          <td>
+                          <i className="fa-solid fa-check-circle me-3 text-success d-inline fa-2x" onClick={() => {
+                                activeuser(Traveler)
+                    }}/>
+                    <i className="fa-solid fa-ban me-3 text-danger d-inline fa-2x" onClick={() => {
+                     deactiveuser(Traveler)
+                    }}/>
+                </td>
+                        </tr>
+                      ))}
+                    
+                </tbody>
+            </table>
           </div>
-          <div className="row mt-5">
-            <div className="d-flex justify-content-around align-items-center">
-              <button
-                type="submit"
-                className="btn btn-primary btnRegister"
-                onClick={handleSubmit}
-              >
-                Register
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btnUpdate"
-                onClick={sendVacancyData}
-              >
-                Update
-              </button>
-              <button type="button" className="btn btn-danger btnDelete">
-                Delete
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+        </div>
+        </div>
     </div>
   );
 };

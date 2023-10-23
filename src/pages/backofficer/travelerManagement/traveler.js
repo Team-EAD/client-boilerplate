@@ -123,7 +123,7 @@ const Traveler= () => {
         title: 'Traveler details added to the System',
     }).then(function () {
       // Redirect the user
-      window.location.href = "/backofficer/traveler";
+      window.location.reload();
     });
   };
 
@@ -214,6 +214,107 @@ const Traveler= () => {
   } 
   
   
+
+
+  const loadtravlerDetailsedit = (Traveler) => {
+
+    document.getElementById("reg").setAttribute("disabled", "true");
+    document.getElementById("delete").setAttribute("disabled", "true");
+
+    
+
+    settraveler_nic(Traveler.nic);
+    settravelerfName(Traveler.firstName);
+    settravelerlName(Traveler.lastName);
+    setcontacts(Traveler.phone);
+     setemail(Traveler.email);
+    setcountry(Traveler.country);
+    setdob(Traveler.dob);
+    setproImage(Traveler.image);
+    setpassowrd(Traveler.passwords);
+
+    
+  };
+
+
+  
+  const loadtravlerDetailsdelete = (Traveler) => {
+
+    document.getElementById("reg").setAttribute("disabled", "true");
+    document.getElementById("edit").setAttribute("disabled", "true");
+
+    
+
+    settraveler_nic(Traveler.nic);
+    settravelerfName(Traveler.firstName);
+    settravelerlName(Traveler.lastName);
+    setcontacts(Traveler.phone);
+     setemail(Traveler.email);
+    setcountry(Traveler.country);
+    setdob(Traveler.dob);
+    setproImage(Traveler.image);
+    setpassowrd(Traveler.passwords);
+
+    
+  };
+
+
+
+
+  function updateTravler(e) {
+    e.preventDefault();
+    const newPackage = {
+      nic,
+      firstName,
+      lastName,
+      phone,
+      country,
+      email,
+      passwords,
+      dob,
+      image,
+    };
+    
+    
+    Axios.put(`https://localhost:44304/api/Traveler/${nic}`,newPackage).then(()=>{})
+      .catch((err) => {
+        console.log(err);
+      });
+      VueSweetalert2.fire({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 1800,
+        icon: 'success',
+        title: 'Traveler details Updated Successfully',
+    }).then(function () {
+        // Redirect the user
+        window.location.reload();
+      });
+    
+    }
+      const  deleteTravler= () => {
+       
+        Axios.delete(`https://localhost:44304/api/Traveler/${nic}`).then((res) => {
+            
+         
+          });
+          VueSweetalert2.fire({
+              toast: true,
+              position: 'center',
+              showConfirmButton: false,
+              timer: 1800,
+              icon: 'success',
+              title: 'Product Deleted Successfully',
+          }).then(function () {
+            // Redirect the user
+            window.location.reload();
+          });
+        };
+  
+
+
+
   
 
 
@@ -225,25 +326,19 @@ const Traveler= () => {
 
 
   return (
-    <div>
-    <div className="main_container">
-   <div className="item fw-bold fs-5">Traveler Management</div>
-      <div className="item">
-        <div className="row mt-5 ps-3">
-          <div className="row">
-            <div className=" col-lg-6 col-md-12 col-sm-12">
-              <div className="row">
-                <div className="d-flex justify-content-start align-items-center">
-              
-                </div>
-              </div>
-            </div>
-            <div className=" col-lg-6 col-md-12 col-sm-12">
-              <div className="row"></div>
-            </div>
-          </div>
+    <div className="ticket-booking-container">
+    <h1 className="fw-bold">Traveler Management</h1>
+    <div className="row mt-5 ps-3">
+      <div className="col-lg-6 col-md-12 col-sm-12">
+        <div className="row">
+          {/* Content for the left side */}
         </div>
-        <div className="row mt-5 px-3">
+      </div>
+      <div className="col-lg-6 col-md-12 col-sm-12">
+        {/* Content for the right side */}
+      </div>
+    </div>
+    <div className="row mt-5 px-3">
         <form>
                           <div className="row">
                               <div className="col d-flex justify-content-end align-items-center">
@@ -280,7 +375,7 @@ const Traveler= () => {
            
               <div className="col-sm-6">
                 <input
-                   value={nic}
+                  value={nic}
                   type="text"
                   className="form-control"
                   placeholder="Traveler nic"
@@ -334,7 +429,7 @@ const Traveler= () => {
               </div>
               <div className="col">
                 <input
-                
+                value={country}
                   type="text"
                   className="form-control"
                   placeholder="Country"
@@ -416,11 +511,12 @@ const Traveler= () => {
                   type="button"
                   id="edit"
                   className="btn btnUpdate"
-                
+                onClick={updateTravler}
                 >
                   Update 
                 </button>
                 <button type="button" id="delete" className="btn btnDelete" 
+                onClick={deleteTravler}
                  >
                 Delete
                 </button>
@@ -439,7 +535,7 @@ const Traveler= () => {
                   className="form-control col-8 me-5 px-5"
                   placeholder="Traveler"
                  onChange={(e) => {
-                  
+                  setuserSearch(e.target.value);
                   }}
                 />
               </div>
@@ -500,10 +596,10 @@ const Traveler= () => {
                           <td className="crs-td">{Traveler.isActive ? 'active' : 'deactive'}</td>
                           <td>
                     <i className="fa-solid fa-pen me-3 text-primary d-inline fa-2x" onClick={() => {
-                      
+                    loadtravlerDetailsedit(Traveler)
                     }}/>
                     <i className="fa-solid fa-trash-can d-inline me-2 text-danger d-inline fa-2x" onClick={() => {
-                     
+                     loadtravlerDetailsdelete(Traveler)
                     }}/>
                 </td>
                         </tr>
@@ -514,8 +610,7 @@ const Traveler= () => {
           </div>
         </div>
       </div>
-    </div>
-  </div>
+   
 );
   
 };

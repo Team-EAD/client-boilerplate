@@ -20,7 +20,36 @@ const TicketBooking = () => {
   const [formErrors, setFormErrors] = useState({}); // State variable for form validation errors
   const [userSearch, setUserSearch] = useState(''); // State variable for user search
   const [listOfReservations, setListOfReservations] = useState([]); // State variable for a list of reservations
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filteredSchedules, setFilteredSchedules] = useState([]);
+  const [reservetrainID, setTrainID] = useState(''); 
+  const [reservetrainName, setTrainName] = useState(''); 
+  //const[trainId,settrainId]=useState('');
 
+
+  
+
+  const openModal = () => {
+    filterSchedules();
+    setIsModalOpen(true);
+  };
+ 
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const filterSchedules = () => {
+    // Make an API request to get the filtered schedules
+    Axios.get(`https://localhost:44304/api/TrainSchedule/${departureLocation}/${destination}`)
+      .then((response) => {
+        setFilteredSchedules(response.data);
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching filtered schedules', error);
+      });
+  };
   // Get the current date and format it
   const bookingDate = new Date();
   const dates = `${bookingDate.getDate()}/${bookingDate.getMonth() + 1}/${bookingDate.getFullYear()}`;
@@ -41,18 +70,38 @@ const TicketBooking = () => {
     setReservationDate(date);
   };
 
+
+
+
+
+
+
+
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    createReservation();
-  };
+  
+
+
 
   // Create a new reservation
-  const createReservation = () => {
+  const createReservation =(TrainSchedule) => {
+    alert(TrainSchedule.id);
+    const id=TrainSchedule.id;
+    Axios.post(`https://localhost:44304/api/TrainSchedule/reserve/${id}`)
+    .then((response) => {
+      // Handle the response here (e.g., update the UI, show a success message, etc.)
+      console.log('Reservation updated successfully');
+    })
+    .catch((error) => {
+      // Handle any errors that occur during the request
+      console.error('Error updating reservation:', error);
+    });
+    
     // Send a POST request to create a reservation
     Axios.post("https://localhost:44304/api/TicketReservation", {
       referenceID,
       time,
+      reservetrainID:TrainSchedule.trainID,
+      reservetrainName:TrainSchedule.trainName,
       reservationDate,
       bookingDate,
       numberOfTickets,
@@ -65,17 +114,20 @@ const TicketBooking = () => {
           setListOfReservations([
             ...listOfReservations,
             {
-              referenceID,
-              time,
-              bookingDate,
-              reservationDate,
-              numberOfTickets,
-              departureLocation,
-              destination
+      referenceID,
+      time,
+      reservetrainID,
+      reservetrainName,
+      reservationDate,
+      bookingDate,
+      numberOfTickets,
+      departureLocation,
+      destination
             },
           ]);
 
           VueSweetalert2.fire({
+           
             toast: true,
             position: 'center',
             showConfirmButton: false,
@@ -84,13 +136,15 @@ const TicketBooking = () => {
             title: 'Reservation added to the System',
           }).then(function () {
             // Redirect the user
-            window.location.href = "/backofficer/ticketbooking";
+            //alert(reservetrainID);
+            window.location.reload();
+            
           });
         }
       })
       .catch((error) => {
         alert('Maximum limit of reservation'); // Handle any errors
-        window.location.href = "/backofficer/ticketbooking";
+        window.location.reload();
       });
   };
 
@@ -101,6 +155,10 @@ const TicketBooking = () => {
     });
   }, []);
 
+  
+  
+
+  
   // Load reservation details for editing
   const loadPackageDetailsEdit = (TicketReservation) => {
     // Disable certain buttons and set details for editing
@@ -113,14 +171,20 @@ const TicketBooking = () => {
     setReservationDate(dates);
     const times = new Date(TicketReservation.time);
     setSelectedTime(times);
+    setTrainID(TicketReservation.reservetrainID);
+    setTrainName(TicketReservation.reservetrainName);
     setDepartureLocation(TicketReservation.departureLocation);
     setDestination(TicketReservation.destination);
     setNumberOfTickets(TicketReservation.numberOfTickets);
   };
 
   // Load reservation details for deletion
+
+  
+
   const loadPackageDetailsDelete = (TicketReservation) => {
     // Disable certain buttons and set details for deletion
+
     document.getElementById("reg").setAttribute("disabled", "true");
     document.getElementById("edit").setAttribute("disabled", "true");
     setReservationIds(TicketReservation.id);
@@ -131,18 +195,26 @@ const TicketBooking = () => {
     const times = new Date(TicketReservation.time);
     setSelectedTime(times);
     setDepartureLocation(TicketReservation.departureLocation);
+    setTrainID(TicketReservation.reservetrainID);
+    setTrainName(TicketReservation.reservetrainName);
     setDestination(TicketReservation.destination);
     setNumberOfTickets(TicketReservation.numberOfTickets);
   };
 
+
+
+
   // Update a reservation
   function updateReservation(e) {
+   
     e.preventDefault();
     const newPackage = {
       id,
       referenceID,
       time,
       bookingDate,
+      reservetrainID,
+      reservetrainName,
       reservationDate,
       numberOfTickets,
       departureLocation,
@@ -159,21 +231,22 @@ const TicketBooking = () => {
             showConfirmButton: false,
             timer: 1800,
             icon: 'success',
-            title: response.data.message, // Assuming the response has a "message" property
+            title: "successfully Update the schedule", // Assuming the response has a "message" property
           }).then(function () {
             // Redirect the user
-            window.location.href = "/backofficer/ticketbooking";
+            window.location.reload();
           });
         }
       })
       .catch((err) => {
         alert("You can't update at least 5 days before the reservation date");
-        window.location.href = "/backofficer/ticketbooking";
+        window.location.reload();
       });
   };
 
   // Delete a reservation
   const deleteReservation = () => {
+
     Axios.delete(`https://localhost:44304/api/TicketReservation/${id}`)
       .then((response) => {
         if (response.status === 200) {
@@ -183,38 +256,33 @@ const TicketBooking = () => {
             showConfirmButton: false,
             timer: 1800,
             icon: 'success',
-            title: response.data, // Assuming the response contains the success message
+            title: "succesfully Cancel the schedule", // Assuming the response contains the success message
           }).then(function () {
             // Redirect the user
-            window.location.href = "/backofficer/ticketbooking";
+            window.location.reload();
           });
         }
       })
       .catch((err) => {
         alert("You can't delete at least 5 days before the reservation date");
-        window.location.href = "/backofficer/ticketbooking";
+        window.location.reload();
       });
   };
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div className="main_container" style={{ width: '70%', height: '500px' }}>
-          <div className="item fw-bold fs-5">Ticket Booking Management</div>
-          <div className="item">
-            <div className="row mt-2 ps-3">
-              <div className="row">
-                <div className="col-lg-6 col-md-12 col-sm-12">
-                  <div className="row">
-                    <div className="d-flex justify-content-start align-items-center"></div>
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-12 col-sm-12">
-                  <div className="row"></div>
-                </div>
-              </div>
-            </div>
-            <div className="row mt-5 px-3">
+    <div className="ticket-booking-container">
+      <h1 className="fw-bold">Ticket Booking Management</h1>
+      <div className="row mt-5 ps-3">
+        <div className="col-lg-6 col-md-12 col-sm-12">
+          <div className="row">
+            {/* Content for the left side */}
+          </div>
+        </div>
+        <div className="col-lg-6 col-md-12 col-sm-12">
+          {/* Content for the right side */}
+        </div>
+      </div>
+      <div className="row mt-5 px-3">
               <form>
                 <div className="row mt-4">
                   <div className="col-5">
@@ -269,28 +337,47 @@ const TicketBooking = () => {
                 </div>
                 <div className="row mt-4">
                   <div className="col">
-                    <input
-                      type="text"
-                      value={departureLocation}
-                      className="form-control"
-                      placeholder="From"
-                      onChange={(e) => {
-                        setDepartureLocation(e.target.value);
-                      }}
-                    />
-                    <p className="alert-txt">{formErrors.Location}</p>
-                  </div>
+                  <select
+                    value={departureLocation}
+                    name="type"
+                    className="form-select"
+                    placeholder='Depature Location'
+                    aria-label="role" 
+                    onChange={(event) => {
+                      setDepartureLocation(event.target.value);
+                    }}
+                  >
+                    < option value="" disabled selected  >
+                     Depature Location
+                    </option>
+                    <option value="Galle">Galle</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Ambalangoda">Ambalangoda</option>
+                    <option value="Nuwara">Nuwara</option>
+                    <option value="Matara">Matara</option>
+                  </select>
+                </div>
                   <div className="col">
                     <div className="col">
-                      <input
-                        type="text"
-                        value={destination}
-                        className="form-control"
-                        placeholder="To"
-                        onChange={(e) => {
-                          setDestination(e.target.value);
-                        }}
-                      />
+                    <select
+                    value={destination}
+                    name="type"
+                    className="form-select"
+                    placeholder='Destination Location'
+                    aria-label="role" 
+                    onChange={(event) => {
+                      setDestination(event.target.value);
+                    }}
+                  >
+                    < option value="" disabled selected >
+                     Destination Location
+                    </option>
+                    <option value="Galle">Galle</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Ambalangoda">Ambalangoda</option>
+                    <option value="Nuwara">Nuwara</option>
+                    <option value="Matara">Matara</option>
+                  </select>
                       <p className="alert-txt">{formErrors.Location}</p>
                     </div>
                   </div>
@@ -316,12 +403,12 @@ const TicketBooking = () => {
                 <div className="row mt-5">
                   <div className="d-flex justify-content-around align-items-center">
                     <button
-                      type="submit"
+                      type="button"
                       className="btn btn-primary btnRegister"
-                      onClick={handleSubmit}
+                      onClick={openModal}
                       id="reg"
                     >
-                      Book
+                      Check
                     </button>
                     <button
                       type="button"
@@ -335,6 +422,78 @@ const TicketBooking = () => {
                       Cancel
                     </button>
                   </div>
+                  {isModalOpen && ( // Modal component
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeModal}>
+              &times;
+            </span>
+            <h3>Available Train Schedules</h3>
+
+            <div> <h5> {departureLocation}   <span className="icon"><i className="fa fa-train" aria-hidden="true" /></span>  {destination}      </h5>  </div>
+            {
+  
+
+
+      <div className="table-responsive">
+      <table className="table table-striped custom-table" id="assignLabsTable">
+     <thead>
+       <tr>
+         <th scope="col">Train ID</th>
+         <th scope="col">Train Name</th>
+         <th scope="col">Depature</th>
+         <th scope="col">Destination</th>
+         <th scope="col">Depature Time</th>
+         <th scope="col">Arrival Time</th>
+         <th scope="col">Action</th>
+         <th scope="col" />
+       </tr>
+     </thead>
+     <tbody>
+     {Array.isArray(filteredSchedules) && filteredSchedules.length > 0 ? (
+          filteredSchedules.map((TrainSchedule, i) => (
+      <tr key={i} className="crs-tr" data-status="active">
+        <td className="crs-td">{TrainSchedule.trainID}</td>
+        <td className="crs-td">{TrainSchedule.trainName}</td>
+        <td className="crs-td">{TrainSchedule.origin}</td>
+        <td className="crs-td">{TrainSchedule.destination}</td>
+        <td className="crs-td">{TrainSchedule.depatureTime}</td>
+        <td className="crs-td">{TrainSchedule.arrivalTime}</td>
+        <td>
+        <button
+          className="btn btn-primary btnRegister"
+                 id="bbokbtn" 
+                 type="submit"
+                 style={{ padding: '2px 2px', width:'80px' ,height:"30px",// You can adjust the padding values
+                 fontSize: '12px',}}
+                  onClick={() => {
+                    createReservation(TrainSchedule);
+                    
+                 }}
+          >
+        Book
+      </button>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="8">No schedules found.</td>
+    </tr>
+  )}
+</tbody>
+   </table>
+ </div>
+
+
+
+
+
+
+            }
+          </div>
+        </div>
+      )}
                 </div>
               </form>
             </div>
@@ -370,6 +529,8 @@ const TicketBooking = () => {
                       <th scope="col">Reference ID</th>
                       <th scope="col">Booking Date</th>
                       <th scope="col">Reservation Date</th>
+                      <th scope="col">Train No</th>
+                      <th scope="col">Train Name</th>
                       <th scope="col">Passengers</th>
                       <th scope="col">From</th>
                       <th scope="col">To</th>
@@ -401,6 +562,8 @@ const TicketBooking = () => {
                             <td className="crs-td">
                               {TicketReservation.reservationDate}
                             </td>
+                            <td className="crs-td">{TicketReservation.reservetrainID}</td>
+                            <td className="crs-td">{TicketReservation.reservetrainName}</td>
                             <td className="crs-td">{TicketReservation.numberOfTickets}</td>
                             <td className="crs-td">{TicketReservation.departureLocation}</td>
                             <td className="crs-td">{TicketReservation.destination}</td>
@@ -425,10 +588,8 @@ const TicketBooking = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+       
   );
 };
 
-export default TicketBooking;
+export default TicketBooking; 
